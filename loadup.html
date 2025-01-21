@@ -3,127 +3,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palace </title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>Palace loadup</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/CustomEase.min.js"></script>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #151515;
-            color: white;
-            overflow: hidden;
+        :root {
+            --primary-red: #E60012;
+            --accent-blue: #00f3ff;
+            --deep-purple: #9d4edd;
+            --neon-pulse: #ff2a6d;
         }
 
-        .loading-screen {
+        @keyframes dimensionalPulse {
+            0%, 100% { filter: brightness(1) saturate(1); }
+            50% { filter: brightness(1.5) saturate(1.2); }
+        }
+
+        @keyframes floatingEffect {
+            0% { transform: translateZ(0) rotateX(0); }
+            50% { transform: translateZ(50px) rotateX(10deg); }
+            100% { transform: translateZ(0) rotateX(0); }
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Helvetica Neue', sans-serif;
+            background: #000;
+            color: white;
+            overflow: hidden;
+            perspective: 2000px;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .master-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: #151515;
+            z-index: 2;
+        }
+
+        .dimensional-frame {
             position: relative;
+            width: 400px;
+            height: 400px;
+            transform-style: preserve-3d;
         }
 
-        .logo-side {
+        .logo-element {
             position: absolute;
-            top: -100px;
-            transform: rotate(90deg);
-            width: 300px;
-            height: 300px;
-            background: url('https://i.ibb.co/ryv45nV/palacepng.png') no-repeat center;
+            width: 100%;
+            height: 100%;
+            background: url('/api/placeholder/400/400') no-repeat center;
             background-size: contain;
-            opacity: 0.7;
+            transform-style: preserve-3d;
+            transition: all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
 
-        .logo-main {
+        .logo-primary {
+            filter: contrast(1.2) brightness(1.1);
+        }
+
+        .logo-secondary {
+            filter: contrast(1.1) hue-rotate(15deg);
+        }
+
+        .logo-core {
+            filter: contrast(1.3) brightness(1.2);
+        }
+
+        .interface-frame {
             position: absolute;
-            width: 300px;
-            height: 300px;
-            background: url('https://i.ibb.co/ryv45nV/palacepng.png') no-repeat center;
-            background-size: contain;
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw;
+            max-width: 900px;
+            height: 85vh;
+            border: 4px solid var(--primary-red);
+            border-radius: 25px;
+            box-shadow: 0 0 40px rgba(230, 0, 18, 0.4);
+            display: none;
+            overflow: hidden;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
         }
 
-        @keyframes glow {
-            0% {
-                box-shadow: 0 0 50px rgba(255, 255, 255, 0);
-            }
-            100% {
-                box-shadow: 0 0 50px rgba(255, 255, 255, 1);
-            }
-        }
-
-        .main-menu {
+        .main-interface {
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            height: 100%;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
         }
 
-        .main-menu h1 {
+        .title-element {
+            font-size: 3.5em;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            margin-bottom: 40px;
+            letter-spacing: 3px;
+            animation: floatingEffect 4s infinite ease-in-out;
+        }
+
+        .interaction-counter {
+            font-size: 1.8em;
+            color: var(--primary-red);
+            background: rgba(255,255,255,0.05);
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: 3px solid var(--primary-red);
+            box-shadow: 0 0 30px rgba(230, 0, 18, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .progress-indicator {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--primary-red);
+            border-radius: 50%;
+            animation: dimensionalPulse 1.5s infinite;
+        }
+
+        .indicator-dot:nth-child(2) { animation-delay: 0.3s; }
+        .indicator-dot:nth-child(3) { animation-delay: 0.6s; }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            background: var(--neon-pulse);
+            border-radius: 50%;
+            mix-blend-mode: screen;
+        }
+
+        /* New Styles for the clickable boxes */
+        .options-container {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .option-box {
+            width: 300px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 2em;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(230, 0, 18, 0.4);
+            transition: transform 0.3s ease-in-out;
         }
 
-        .main-menu span {
-            margin-top: 20px;
-            font-size: 1.2em;
+        .option-box:hover {
+            transform: scale(1.05);
+        }
+
+        /* Fullscreen iframe styles */
+        iframe {
+            width: 100vw;
+            height: 100vh;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <div class="loading-screen">
-        <div class="logo-side"></div>
-        <div class="logo-main"></div>
+    <canvas id="particle-canvas"></canvas>
+    
+    <div class="master-container">
+        <div class="dimensional-frame">
+            <div class="logo-element logo-primary"></div>
+            <div class="logo-element logo-secondary"></div>
+            <div class="logo-element logo-core"></div>
+        </div>
+        <div class="progress-indicator">
+            <div class="indicator-dot"></div>
+            <div class="indicator-dot"></div>
+            <div class="indicator-dot"></div>
+        </div>
     </div>
 
-    <div class="main-menu">
-        <h1>Press B Four Times to Continue</h1>
-        <span id="b-count">B Pressed: 0/4</span>
+    <div class="interface-frame">
+        <div class="main-interface">
+            <h1 class="title-element">PALACE</h1>
+            <div class="interaction-counter" id="interaction-count">Press B to Begin</div>
+        </div>
+    </div>
+
+    <div class="options-container" id="options-container">
+        <div class="option-box" id="palace-option">Palace</div>
+        <div class="option-box" id="realmzz-option">Realmzz</div>
     </div>
 
     <script>
-        const loadingScreen = document.querySelector('.loading-screen');
-        const logoSide = document.querySelector('.logo-side');
-        const logoMain = document.querySelector('.logo-main');
-        const mainMenu = document.querySelector('.main-menu');
-        const bCount = document.getElementById('b-count');
+        // Advanced particle system
+        class ParticleSystem {
+            constructor() {
+                this.canvas = document.getElementById('particle-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
 
-        let bPresses = 0;
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
 
-        gsap.to(logoSide, {
+            createParticle(x, y) {
+                return {
+                    x,
+                    y,
+                    size: Math.random() * 3 + 1,
+                    speedX: Math.random() * 4 - 2,
+                    speedY: Math.random() * 4 - 2,
+                    life: 1
+                };
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const p = this.particles[i];
+                    p.life -= 0.01;
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(255, 42, 109, ${p.life})`;
+                    this.ctx.fill();
+                    
+                    if (p.life <= 0) this.particles.splice(i, 1);
+                }
+
+                if (Math.random() < 0.1) {
+                    this.particles.push(this.createParticle(
+                        Math.random() * this.canvas.width,
+                        Math.random() * this.canvas.height
+                    ));
+                }
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // Initialize systems
+        const particles = new ParticleSystem();
+        particles.animate();
+
+        // Advanced animation timeline
+        const tl = gsap.timeline({
+            defaults: { ease: "power3.out" }
+        });
+
+        // Initial state setup
+        gsap.set('.logo-primary', { x: -800, rotation: 180, opacity: 0 });
+        gsap.set('.logo-secondary', { scale: 0.3, opacity: 0 });
+        gsap.set('.logo-core', { scale: 0.1, opacity: 0 });
+
+        // Complex animation sequence
+        tl.to('.logo-primary', {
             duration: 2,
-            y: 400,
-            ease: "bounce.out",
+            x: 0,
+            rotation: 0,
+            opacity: 0.9,
+            ease: "elastic.out(1, 0.3)"
+        })
+        .to('.logo-secondary', {
+            duration: 1.5,
+            scale: 1,
+            opacity: 0.85,
+            ease: "back.out(2)",
+        }, "-=1")
+        .to('.logo-core', {
+            duration: 1.5,
+            scale: 0.9,
+            opacity: 1,
+            ease: "power2.out"
+        }, "-=1")
+        .add(() => {
+            gsap.to('.logo-core', {
+                duration: 3,
+                filter: 'brightness(1.5) contrast(1.3)',
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            });
+        })
+        .to('.master-container', {
+            duration: 1.5,
+            opacity: 0,
+            delay: 2,
             onComplete: () => {
-                gsap.to(logoMain, {
-                    duration: 1,
-                    boxShadow: "0 0 50px rgba(255, 255, 255, 1)",
-                    onComplete: () => {
-                        setTimeout(() => {
-                            loadingScreen.style.display = 'none';
-                            mainMenu.style.display = 'flex';
-                        }, 1000);
-                    }
-                });
+                document.querySelector('.master-container').style.display = 'none';
+                document.querySelector('.interface-frame').style.display = 'block';
+                document.querySelector('.main-interface').style.display = 'flex';
             }
         });
 
+        // Interaction handling
+        let pressCount = 0;
         document.addEventListener('keydown', (e) => {
-            if (mainMenu.style.display === 'flex' && e.key.toLowerCase() === 'b') {
-                bPresses++;
-                bCount.textContent = `B Pressed: ${bPresses}/4`;
+            if (document.querySelector('.main-interface').style.display === 'flex' && e.key.toLowerCase() === 'b') {
+                pressCount++;
+                const counter = document.querySelector('.interaction-counter');
+                
+                gsap.to('.interaction-counter', {
+                    scale: 1.3,
+                    duration: 0.15,
+                    yoyo: true,
+                    repeat: 1,
+                    ease: "power2.inOut"
+                });
 
-                if (bPresses === 4) {
-                    alert('Access Granted!');
-                    mainMenu.style.display = 'none';
+                if (pressCount < 4) {
+                    counter.textContent = `B Pressed: ${pressCount}/4`;
+                    
+                    // Create burst effect
+                    for (let i = 0; i < 10; i++) {
+                        const angle = (Math.PI * 2 / 10) * i;
+                        particles.particles.push(particles.createParticle(
+                            window.innerWidth / 2 + Math.cos(angle) * 100,
+                            window.innerHeight / 2 + Math.sin(angle) * 100
+                        ));
+                    }
+                } else {
+                    counter.textContent = 'Access Granted';
+                    counter.style.color = '#00f3ff';
+                    
+                    gsap.to('.interface-frame', {
+                        duration: 1.5,
+                        scale: 1.2,
+                        opacity: 0,
+                        ease: "power3.inOut",
+                        onComplete: () => {
+                            document.querySelector('.interface-frame').style.display = 'none';
+                            document.querySelector('#options-container').style.display = 'flex';
+                        }
+                    });
+
+                    // Final particle burst
+                    for (let i = 0; i < 30; i++) {
+                        particles.particles.push(particles.createParticle(
+                            window.innerWidth / 2,
+                            window.innerHeight / 2
+                        ));
+                    }
                 }
             }
         });
+
+        // Handle clicks for the Palace and Realmzz options
+        document.getElementById('palace-option').addEventListener('click', () => {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'palace.html';
+            document.body.innerHTML = ''; 
+            document.body.appendChild(iframe); 
+        });
+
+        document.getElementById('realmzz-option').addEventListener('click', () => {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'index.html';
+            document.body.innerHTML = ''; 
+            document.body.appendChild(iframe); 
+        });
     </script>
 </body>
+</html>
+
 </html>
 
 </body>
