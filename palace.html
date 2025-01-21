@@ -14,251 +14,68 @@
             font-family: 'Poppins', sans-serif;
             background: radial-gradient(circle at center, #1e1e2f, #151515);
             color: white;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        header {
+        .main-menu {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            padding: 20px;
-            background: rgba(20, 20, 20, 0.8);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            height: 100vh;
         }
 
-        .logo {
+        .main-menu input {
             font-size: 2em;
-            font-weight: bold;
-            background: linear-gradient(45deg, #ff4d4d, #1e90ff);
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-menu img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .carousel {
-            display: flex;
-            overflow: hidden;
-            width: 80%;
-            height: 300px;
-            border-radius: 15px;
-            perspective: 1000px;
-            margin-bottom: 30px;
-        }
-
-        .carousel img {
-            width: 100%;
-            transition: transform 0.5s ease;
-            transform: rotateY(10deg);
-        }
-
-        .carousel:hover img {
-            transform: rotateY(0deg) scale(1.1);
-        }
-
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            width: 90%;
-        }
-
-        .game-tile {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
-            transform-style: preserve-3d;
-            transform: rotateY(0deg);
-            transition: transform 0.6s;
-        }
-
-        .game-tile:hover {
-            transform: rotateY(360deg) scale(1.1);
-        }
-
-        .game-tile img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-
-        .game-title {
             padding: 10px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
             text-align: center;
-            font-weight: bold;
-            font-size: 1.2em;
         }
 
-        footer {
-            padding: 20px;
-            text-align: center;
-            background: rgba(20, 20, 20, 0.9);
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.6);
-        }
-
-        /* Slide-out Navbar */
-        .nav-bar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 300px;
-            height: 100%;
-            background: linear-gradient(135deg, #2c3e50, #1c1c1c);
-            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            transition: all 0.5s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 30px;
-        }
-
-        .nav-bar.active {
-            left: 0;
-        }
-
-        .nav-bar .close-btn {
-            align-self: flex-end;
-            margin-right: 20px;
-            cursor: pointer;
+        .main-menu button {
+            margin-top: 20px;
+            padding: 10px 20px;
             font-size: 1.5em;
-        }
-
-        .nav-bar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
-
-        .nav-bar ul li {
-            width: 100%;
-            text-align: center;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-bar ul li a {
+            background: linear-gradient(45deg, #1e90ff, #ff4d4d);
+            border: none;
             color: white;
-            text-decoration: none;
-            font-size: 1.2em;
-            display: block;
-            transition: color 0.3s;
-        }
-
-        .nav-bar ul li a:hover {
-            color: #ff4d4d;
-        }
-
-        .menu-toggle {
-            font-size: 1.5em;
             cursor: pointer;
+            border-radius: 5px;
         }
 
-        .menu-toggle:hover {
-            color: #1e90ff;
+        .main-menu button:hover {
+            background: linear-gradient(45deg, #ff4d4d, #1e90ff);
         }
 
+        iframe {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">PALACE</div>
-        <i class="fas fa-bars menu-toggle"></i>
-        <div class="user-menu">
-            <span>Welcome, Player!</span>
-            <img src="https://via.placeholder.com/50" alt="User Avatar">
-        </div>
-    </header>
-
-    <div class="nav-bar">
-        <i class="fas fa-times close-btn"></i>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Games</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">About</a></li>
-        </ul>
+    <div class="main-menu">
+        <h1>Welcome to Palace</h1>
+        <input type="password" id="unlock-code" placeholder="Enter Code">
+        <button id="unlock-btn">Unlock</button>
     </div>
 
-    <main class="main">
-        <div class="carousel">
-            <img src="https://via.placeholder.com/800x300" alt="Featured Game">
-        </div>
-
-        <div class="game-grid">
-            <div class="game-tile">
-                <img src="https://via.placeholder.com/150" alt="Game 1">
-                <div class="game-title">Game 1</div>
-            </div>
-            <div class="game-tile">
-                <img src="https://via.placeholder.com/150" alt="Game 2">
-                <div class="game-title">Game 2</div>
-            </div>
-            <div class="game-tile">
-                <img src="https://via.placeholder.com/150" alt="Game 3">
-                <div class="game-title">Game 3</div>
-            </div>
-            <div class="game-tile">
-                <img src="https://via.placeholder.com/150" alt="Game 4">
-                <div class="game-title">Game 4</div>
-            </div>
-            <div class="game-tile">
-                <img src="https://via.placeholder.com/150" alt="Game 5">
-                <div class="game-title">Game 5</div>
-            </div>
-            <div class="game-tile">
-                <img src="https://via.placeholder.com/150" alt="Game 6">
-                <div class="game-title">Game 6</div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        © 2025 Palace Inc. All Rights Reserved.
-    </footer>
+    <iframe id="content-frame" src="https://lipicode.github.io/Realmzz/palacemain.html/"></iframe>
 
     <script>
-        $(document).ready(function() {
-            $('.menu-toggle').click(function() {
-                $('.nav-bar').addClass('active');
-            });
-
-            $('.close-btn').click(function() {
-                $('.nav-bar').removeClass('active');
-            });
-
-            gsap.from(".carousel img", { duration: 1, opacity: 0, y: -50 });
-            gsap.from(".game-grid .game-tile", {
-                duration: 0.8,
-                opacity: 0,
-                y: 20,
-                stagger: 0.2
-            });
-
-            // Three.js 3D background animation
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement
+        document.getElementById('unlock-btn').addEventListener('click', function() {
+            const code = document.getElementById('unlock-code').value;
+            if (code === '1234') {
+                document.querySelector('.main-menu').style.display = 'none';
+                document.getElementById('content-frame').style.display = 'block';
+            } else {
+                alert('Incorrect Code. Try Again.');
+            }
+        });
+    </script>
+</body>
+</html>
