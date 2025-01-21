@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palace</title>
+    <title>Palace </title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
             --primary-red: #E60012;
@@ -45,16 +46,27 @@
             background-size: contain;
         }
 
-        .interaction-counter {
-            font-size: 1.8em;
-            color: var(--primary-red);
-            background: rgba(255,255,255,0.05);
-            padding: 15px 30px;
-            border-radius: 20px;
-            border: 3px solid var(--primary-red);
-            box-shadow: 0 0 30px rgba(230, 0, 18, 0.2);
-            backdrop-filter: blur(5px);
-            text-align: center;
+        .progress-indicator {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--primary-red);
+            border-radius: 50%;
+            animation: dimensionalPulse 1.5s infinite;
+        }
+
+        .indicator-dot:nth-child(2) { animation-delay: 0.3s; }
+        .indicator-dot:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes dimensionalPulse {
+            0%, 100% { filter: brightness(1) saturate(1); }
+            50% { filter: brightness(1.5) saturate(1.2); }
         }
 
         .options-container {
@@ -101,7 +113,11 @@
     <canvas id="particle-canvas"></canvas>
     <div class="master-container">
         <div class="logo-element"></div>
-        <div class="interaction-counter" id="interaction-count">Press B to Begin</div>
+        <div class="progress-indicator">
+            <div class="indicator-dot"></div>
+            <div class="indicator-dot"></div>
+            <div class="indicator-dot"></div>
+        </div>
     </div>
     <div class="options-container" id="options-container">
         <div class="option-box" id="palace-option">Palace</div>
@@ -159,32 +175,21 @@
         const particles = new ParticleSystem();
         particles.animate();
 
-        let pressCount = 0;
-        document.addEventListener('keydown', (e) => {
-            if (e.key.toLowerCase() === 'b') {
-                pressCount++;
-                const counter = document.getElementById('interaction-count');
-                gsap.to(counter, {
-                    scale: 1.3,
-                    duration: 0.15,
-                    yoyo: true,
-                    repeat: 1
-                });
-
-                if (pressCount < 4) {
-                    counter.textContent = `B Pressed: ${pressCount}/4`;
-                } else {
-                    counter.textContent = 'Access Granted';
-                    counter.style.color = var(--accent-blue);
-                    gsap.to('.master-container', {
-                        duration: 1.5,
-                        opacity: 0,
-                        onComplete: () => {
-                            document.querySelector('.master-container').style.display = 'none';
-                            document.querySelector('#options-container').style.display = 'flex';
-                        }
-                    });
-                }
+        gsap.timeline({
+            defaults: { ease: "power3.out" }
+        })
+        .to('.logo-element', {
+            duration: 2,
+            opacity: 1,
+            ease: "elastic.out(1, 0.3)"
+        })
+        .to('.master-container', {
+            duration: 1.5,
+            opacity: 0,
+            delay: 2,
+            onComplete: () => {
+                document.querySelector('.master-container').style.display = 'none';
+                document.querySelector('#options-container').style.display = 'flex';
             }
         });
 
@@ -204,4 +209,3 @@
     </script>
 </body>
 </html>
-
