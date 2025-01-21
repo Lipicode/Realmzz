@@ -64,16 +64,27 @@
         <button id="unlock-btn">Unlock</button>
     </div>
 
-    <iframe id="content-frame" src="https://lipicode.github.io/Realmzz/palacemain.html/"></iframe>
+    <iframe id="content-frame" src="https://lipicode.github.io/Realmzz/palacemain.html"></iframe>
 
     <script>
         document.getElementById('unlock-btn').addEventListener('click', function() {
             const code = document.getElementById('unlock-code').value;
+            const iframe = document.getElementById('content-frame');
+
             if (code === '1234') {
                 document.querySelector('.main-menu').style.display = 'none';
-                document.getElementById('content-frame').style.display = 'block';
+                iframe.style.display = 'block';
+                iframe.src = 'https://lipicode.github.io/Realmzz/palacemain.html';
+            } else if (code === '4321') {
+                document.querySelector('.main-menu').style.display = 'none';
+                iframe.style.display = 'block';
+                iframe.src = 'https://lipicode.github.io/Realmzz/palacemain.html';
+            } else if (code === '5436') {
+                document.querySelector('.main-menu').style.display = 'none';
+                iframe.style.display = 'block';
+                iframe.src = 'https://lipicode.github.io/Realmzz/palacemain.html';
             } else {
-                alert('Incorrect Code. Try Again.');
+                alert('Incorrect Code. The valid codes are 1234, 4321, and 5436.');
             }
         });
     </script>
