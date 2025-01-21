@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palace Loadup</title>
+    <title>Palace </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -26,31 +26,33 @@
             position: relative;
         }
 
-        .logo-outline {
+        .logo-side {
+            position: absolute;
+            top: -100px;
+            transform: rotate(90deg);
             width: 300px;
             height: 300px;
             background: url('https://i.ibb.co/ryv45nV/palacepng.png') no-repeat center;
             background-size: contain;
-            filter: brightness(0) invert(1);
-            clip-path: polygon(0 0, 0 0, 0 0); /* Initially clipped */
-            animation: drawOutline 3s forwards;
+            opacity: 0.7;
         }
 
-        @keyframes drawOutline {
+        .logo-main {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: url('https://i.ibb.co/ryv45nV/palacepng.png') no-repeat center;
+            background-size: contain;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0);
+        }
+
+        @keyframes glow {
             0% {
-                clip-path: polygon(0 0, 0 0, 0 0);
+                box-shadow: 0 0 50px rgba(255, 255, 255, 0);
             }
             100% {
-                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+                box-shadow: 0 0 50px rgba(255, 255, 255, 1);
             }
-        }
-
-        .logo-full {
-            display: none;
-            width: 300px;
-            height: 300px;
-            background: url('https://i.ibb.co/ryv45nV/palacepng.png') no-repeat center;
-            background-size: contain;
         }
 
         .main-menu {
@@ -73,8 +75,8 @@
 </head>
 <body>
     <div class="loading-screen">
-        <div class="logo-outline"></div>
-        <div class="logo-full"></div>
+        <div class="logo-side"></div>
+        <div class="logo-main"></div>
     </div>
 
     <div class="main-menu">
@@ -84,21 +86,29 @@
 
     <script>
         const loadingScreen = document.querySelector('.loading-screen');
-        const logoOutline = document.querySelector('.logo-outline');
-        const logoFull = document.querySelector('.logo-full');
+        const logoSide = document.querySelector('.logo-side');
+        const logoMain = document.querySelector('.logo-main');
         const mainMenu = document.querySelector('.main-menu');
         const bCount = document.getElementById('b-count');
 
         let bPresses = 0;
 
-        logoOutline.addEventListener('animationend', () => {
-            logoOutline.style.display = 'none';
-            logoFull.style.display = 'block';
-
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                mainMenu.style.display = 'flex';
-            }, 1500);
+        gsap.to(logoSide, {
+            duration: 2,
+            y: 400,
+            ease: "bounce.out",
+            onComplete: () => {
+                gsap.to(logoMain, {
+                    duration: 1,
+                    boxShadow: "0 0 50px rgba(255, 255, 255, 1)",
+                    onComplete: () => {
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            mainMenu.style.display = 'flex';
+                        }, 1000);
+                    }
+                });
+            }
         });
 
         document.addEventListener('keydown', (e) => {
@@ -109,10 +119,12 @@
                 if (bPresses === 4) {
                     alert('Access Granted!');
                     mainMenu.style.display = 'none';
-                    // Transition to the next part (you can add logic here)
                 }
             }
         });
     </script>
+</body>
+</html>
+
 </body>
 </html>
