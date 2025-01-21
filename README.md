@@ -6,7 +6,7 @@ Realmzz is a game space that allows users to explore, filter, and play a variety
 
 - **Dynamic Game Filtering:**
   - Search games by title.
-  - Filter games by genre (Action, Adventure, Racing, Sports, RPG).
+  - Filter games by genre (Action, Adventure, Racing, Sports, RPG and more).
   - Sort games by popularity, rating, or release date. Sorting and filtering are implemented using JavaScript, leveraging event listeners to capture user inputs and dynamically updating the game list displayed on the page.
 
 - **Custom Game Launcher:**
@@ -66,4 +66,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 Enjoy exploring **Realmzz** and have fun gaming! 🎮
-
+btw not everything is accurate
