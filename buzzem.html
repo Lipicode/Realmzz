@@ -2,132 +2,132 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Buzzem</title>
     <style>
+      /* Global Styles */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: "Segoe UI", sans-serif;
+        font-family: 'Helvetica', sans-serif;
       }
       :root {
-        --primary: #0a0a1a;
-        --secondary: #12121f;
-        --accent: #1f1f3a;
-        --text: #ff3366;
-        --gradient: linear-gradient(135deg, var(--accent), var(--secondary));
+        --primary: #101020;
+        --secondary: #1a1a3a;
+        --accent: #ff3366;
+        --text: #fff;
+        --gradient: linear-gradient(135deg, #12124a, #101030);
         --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        --cursor-size: 24px;
       }
       body {
         background: var(--primary);
-        color: #fff;
+        color: var(--text);
         min-height: 100vh;
+        overflow-x: hidden;
       }
+
+      /* Custom Cursor */
+      .custom-cursor {
+        position: fixed;
+        width: var(--cursor-size);
+        height: var(--cursor-size);
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 10000;
+        transition: transform 0.05s ease, opacity 0.1s ease;
+      }
+
+      /* Header */
       .header {
         background: var(--gradient);
-        padding: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        padding: 1.5rem;
+        text-align: center;
         position: sticky;
         top: 0;
-        z-index: 100;
+        z-index: 10;
         box-shadow: var(--shadow);
       }
       .logo {
-        color: var(--text);
-        font-size: 2rem;
-        font-weight: bold;
-        text-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--accent);
+        text-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
       }
-      .search-container {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .search-input,
-      .filter-select {
-        padding: 0.5rem;
-        border-radius: 4px;
-        border: 1px solid var(--accent);
-        background: rgba(15, 15, 30, 0.8);
-        color: #fff;
-        width: 200px;
-        backdrop-filter: blur(5px);
-      }
-      .filter-container {
-        display: flex;
-        gap: 0.5rem;
-        padding: 1rem;
-        background: var(--gradient);
-        flex-wrap: wrap;
-      }
-      .filter-btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        background: rgba(15, 15, 30, 0.8);
-        color: #fff;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      .filter-btn:hover {
-        background: var(--text);
-        transform: translateY(-2px);
-      }
-      .filter-btn.active {
-        background: var(--text);
-        box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
-      }
+
+      /* Games Grid */
       .games-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 1.5rem;
-        padding: 1.5rem;
+        padding: 2rem;
       }
       .game-card {
         background: var(--secondary);
         border-radius: 12px;
         overflow: hidden;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         box-shadow: var(--shadow);
       }
       .game-card:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+        transform: scale(1.05);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
       }
       .game-img {
         width: 100%;
         height: 180px;
         object-fit: cover;
-        transition: all 0.3s ease;
       }
       .game-info {
         padding: 1rem;
       }
       .game-title {
-        color: var(--text);
-        margin-bottom: 0.5rem;
+        color: var(--accent);
         font-size: 1.2rem;
+        margin-bottom: 0.5rem;
       }
       .game-genre {
+        color: #ccc;
         font-size: 0.9rem;
-        color: #888;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
       }
-      .game-meta {
+
+      /* Bottom Bar */
+      .bottom-bar {
+        background: var(--gradient);
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        padding: 1rem;
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
         align-items: center;
-        margin-top: 0.5rem;
-        font-size: 0.8rem;
-        color: #666;
+        gap: 1rem;
+        box-shadow: var(--shadow);
       }
+      .search-container {
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+        max-width: 600px;
+        justify-content: center;
+      }
+      .search-input,
+      .filter-select {
+        padding: 0.5rem;
+        border-radius: 4px;
+        border: 1px solid var(--accent);
+        background: #1a1a3a;
+        color: #fff;
+        width: 100%;
+        max-width: 200px;
+        text-align: center;
+      }
+
+      /* Custom Frame */
       .custom-frame-overlay {
         display: none;
         position: fixed;
@@ -148,89 +148,35 @@
         background: var(--secondary);
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        box-shadow: var(--shadow);
       }
       .custom-frame-header {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
         padding: 1rem;
         background: var(--gradient);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        z-index: 1010;
       }
       .frame-title {
-        font-size: 1.2rem;
-        color: var(--text);
-      }
-      .frame-controls {
-        display: flex;
-        gap: 1rem;
-      }
-      .control-btn {
-        background: none;
-        border: none;
-        color: #fff;
         font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      .control-btn:hover {
-        color: var(--text);
-        transform: scale(1.1);
+        color: var(--accent);
       }
       .custom-frame-content {
         width: 100%;
         height: 100%;
         border: none;
-        background: #000;
-      }
-      .custom-frame-active {
-        display: block;
-        opacity: 1;
-      }
-      .spinner {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 60px;
-        height: 60px;
-        border: 7px solid var(--accent);
-        border-top-color: var(--text);
-        border-radius: 70%;
-        animation: spin 1s linear infinite;
-      }
-      @keyframes spin {
-        to {
-          transform: translate(-50%, -50%) rotate(360deg);
-        }
-      }
-      .tag {
-        background: var(--accent);
-        padding: 0.2rem 0.5rem;
-        border-radius: 3px;
-        font-size: 0.8rem;
-      }
-      .popularity-meter {
-        height: 4px;
-        background: #333;
-        border-radius: 2px;
-        overflow: hidden;
-      }
-      .popularity-fill {
-        height: 100%;
-        background: var(--text);
-        transition: width 0.3s ease;
       }
     </style>
   </head>
   <body>
+    <div class="custom-cursor" id="customCursor"></div>
     <header class="header">
       <div class="logo">Buzzem</div>
+    </header>
+    <main>
+      <div class="games-grid" id="gamesGrid"></div>
+    </main>
+    <footer class="bottom-bar">
       <div class="search-container">
         <input
           type="text"
@@ -246,29 +192,15 @@
           <option value="sports">Sports</option>
           <option value="rpg">RPG</option>
         </select>
-        <select class="filter-select" id="sortFilter">
-          <option value="popularity">Most Popular</option>
-          <option value="rating">Highest Rated</option>
-          <option value="newest">Newest</option>
-        </select>
       </div>
-    </header>
-    <div class="filter-container" id="filterTags"></div>
-    <div class="games-grid" id="gamesGrid"></div>
-    <div class="custom-frame-overlay" id="gameOverlay">
-      <div class="custom-frame-container">
-        <div class="custom-frame-header">
-          <div class="frame-title" id="frameTitle"></div>
-          <div class="frame-controls">
-            <button class="control-btn" id="refreshFrame">↻</button>
-            <button class="control-btn" id="closeFrame">×</button>
-          </div>
-        </div>
-        <div id="frameSpinner" class="spinner"></div>
-        <iframe id="gameContainer" class="custom-frame-content"></iframe>
-      </div>
-    </div>
+    </footer>
     <script>
+      const customCursor = document.getElementById('customCursor');
+      document.addEventListener('mousemove', (e) => {
+        customCursor.style.left = `${e.pageX}px`;
+        customCursor.style.top = `${e.pageY}px`;
+      });
+
       const games = [
         {
           id: "007",
@@ -523,84 +455,28 @@
         },
       ];
       const gamesGrid = document.getElementById("gamesGrid");
-      const gameOverlay = document.getElementById("gameOverlay");
-      const gameContainer = document.getElementById("gameContainer");
-      const frameTitle = document.getElementById("frameTitle");
-      const frameSpinner = document.getElementById("frameSpinner");
+      const genreFilter = document.getElementById("genreFilter");
 
-      function renderGameCard(game) {
-        return `
-          <div class="game-card" onclick="openGameFrame('${game.id}')">
-            <img class="game-img" src="${game.thumbnail}" alt="${game.title}" />
-            <div class="game-info">
-              <div class="game-title">${game.title}</div>
-              <div class="game-genre">${game.genre}</div>
-              <div class="game-meta">
-                <div>⭐ ${game.rating}</div>
-                <div>
-                  <div class="popularity-meter">
-                    <div class="popularity-fill" style="width: ${game.popularity}%"></div>
-                  </div>
-                </div>
+      function loadGames() {
+        gamesGrid.innerHTML = games
+          .map(
+            (game) => `
+            <div class="game-card">
+              <img
+                src="https://via.placeholder.com/250"
+                alt="${game.title}"
+                class="game-img"
+              />
+              <div class="game-info">
+                <div class="game-title">${game.title}</div>
+                <div class="game-genre">${game.genre}</div>
               </div>
-            </div>
-          </div>
-        `;
+            </div>`
+          )
+          .join("");
       }
 
-      function openGameFrame(id) {
-        const game = games.find(game => game.id === id);
-        gameContainer.src = game.url;
-        frameTitle.textContent = game.title;
-        gameOverlay.classList.add("custom-frame-active");
-        frameSpinner.style.display = "block";
-        gameContainer.onload = function () {
-          frameSpinner.style.display = "none";
-        };
-      }
-
-      function closeGameFrame() {
-        gameOverlay.classList.remove("custom-frame-active");
-        gameContainer.src = "";
-      }
-
-      function filterGames() {
-        const searchInput = document.getElementById("searchInput").value.toLowerCase();
-        const genreFilter = document.getElementById("genreFilter").value;
-        const filteredGames = games.filter(game => {
-          return (
-            game.title.toLowerCase().includes(searchInput) &&
-            (genreFilter ? game.genre === genreFilter : true)
-          );
-        });
-        gamesGrid.innerHTML = filteredGames.map(renderGameCard).join("");
-      }
-
-      function setupFilters() {
-        const genreFilter = document.getElementById("genreFilter");
-        const sortFilter = document.getElementById("sortFilter");
-
-        genreFilter.addEventListener("change", filterGames);
-        sortFilter.addEventListener("change", () => {
-          const sortBy = sortFilter.value;
-          games.sort((a, b) => {
-            return sortBy === "popularity" 
-              ? b.popularity - a.popularity
-              : sortBy === "rating"
-              ? b.rating - a.rating
-              : 0;
-          });
-          filterGames();
-        });
-      }
-
-      function loadPage() {
-        gamesGrid.innerHTML = games.map(renderGameCard).join("");
-        setupFilters();
-      }
-
-      document.getElementById("closeFrame").addEventListener("click", closeGameFrame);
-      loadPage();
+      loadGames();
     </script>
   </body>
 </html>
