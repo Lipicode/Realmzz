@@ -122,6 +122,7 @@
     <div class="options-container" id="options-container">
         <div class="option-box" id="palace-option">Palace</div>
         <div class="option-box" id="realmzz-option">Realmzz</div>
+        <div class="option-box" id="buzzem-option">Buzzem</div>
     </div>
     <script>
         class ParticleSystem {
@@ -203,6 +204,12 @@
         document.getElementById('realmzz-option').addEventListener('click', () => {
             const iframe = document.createElement('iframe');
             iframe.src = 'index.html';
+            document.body.innerHTML = '';
+            document.body.appendChild(iframe);
+        });
+                document.getElementById('buzzem-option').addEventListener('click', () => {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'buzzem.html';
             document.body.innerHTML = '';
             document.body.appendChild(iframe);
         });
