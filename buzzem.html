@@ -1,1 +1,415 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Buzzem</title><style>@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');*{margin:0;padding:0;box-sizing:border-box;font-family:"Roboto",sans-serif;cursor:url('https://cdn.custom-cursor.com/db/7998/32/cursor_2.png'),auto;}:root{--primary:#0a0a1a;--secondary:#12121f;--accent:#1f1f3a;--text:#ff3366;--gradient:linear-gradient(135deg,var(--accent),var(--secondary));--shadow:0 4px 6px rgba(0,0,0,0.3);}body{background:var(--primary);color:#fff;min-height:100vh;}.header{background:var(--gradient);padding:1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}.logo{color:var(--text);font-size:2.5rem;font-weight:bold;text-shadow:0 0 10px rgba(255,51,102,0.3);}.search-container{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;}.search-input,.filter-select{padding:0.5rem;border-radius:4px;border:1px solid var(--accent);background:rgba(15,15,30,0.8);color:#fff;width:200px;backdrop-filter:blur(5px);}.filter-container{display:flex;gap:0.5rem;padding:1rem;background:var(--gradient);overflow-x:auto;}.filter-btn{padding:0.5rem 1rem;border:none;border-radius:4px;background:rgba(15,15,30,0.8);color:#fff;cursor:pointer;transition:all 0.3s ease;}.filter-btn:hover{background:var(--text);transform:translateY(-2px);}.filter-btn.active{background:var(--text);box-shadow:0 0 10px rgba(255,51,102,0.3);}.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.5rem;padding:1.5rem;}.game-card{background:var(--secondary);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.3s ease;box-shadow:var(--shadow);}.game-card:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 8px 12px rgba(0,0,0,0.4);}.game-img{width:100%;height:180px;object-fit:cover;transition:all 0.3s ease;}.game-info{padding:1rem;}.game-title{color:var(--text);margin-bottom:0.5rem;font-size:1.2rem;}.game-genre{font-size:0.9rem;color:#888;display:flex;align-items:center;gap:0.5rem;}.game-meta{display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem;font-size:0.8rem;color:#666;}.custom-frame-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:1000;opacity:0;transition:opacity 0.3s ease;}.custom-frame-container{position:relative;width:95%;height:95%;margin:2% auto;background:var(--secondary);border-radius:12px;overflow:hidden;box-shadow:0 0 30px rgba(0,0,0,0.5);}.custom-frame-header{position:absolute;top:0;left:0;right:0;padding:1rem;background:var(--gradient);display:flex;justify-content:space-between;align-items:center;z-index:1010;}.frame-title{font-size:1.2rem;color:var(--text);}.frame-controls{display:flex;gap:1rem;}.control-btn{background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;transition:all 0.3s ease;}.control-btn:hover{color:var(--text);transform:scale(1.1);}.custom-frame-content{width:100%;height:100%;border:none;background:#000;}.custom-frame-active{display:block;opacity:1;}.spinner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border:7px solid var(--accent);border-top-color:var(--text);border-radius:70%;animation:spin 1s linear infinite;}@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg);}}.tag{background:var(--accent);padding:0.2rem 0.5rem;border-radius:3px;font-size:0.8rem;}.popularity-meter{height:4px;background:#333;border-radius:2px;overflow:hidden;}.popularity-fill{height:100%;background:var(--text);transition:width 0.3s ease;}.category-container{display:flex;gap:1rem;overflow-x:auto;padding:1rem;background:var(--gradient);}.category-item{flex:0 0 auto;padding:0.5rem 1rem;border-radius:4px;background:rgba(15,15,30,0.8);color:#fff;cursor:pointer;transition:all 0.3s ease;}.category-item:hover{background:var(--text);transform:translateY(-2px);}.category-item.active{background:var(--text);box-shadow:0 0 10px rgba(255,51,102,0.3);}</style></head><body><header class="header"><div class="logo">Buzzem</div><div class="search-container"><input type="text" class="search-input" placeholder="Search games..." id="searchInput"/><select class="filter-select" id="sortFilter"><option value="popularity">Most Popular</option><option value="rating">Highest Rated</option><option value="newest">Newest</option></select></div></header><div class="category-container" id="categoryContainer"><div class="category-item" data-category="action">Action</div><div class="category-item" data-category="adventure">Adventure</div><div class="category-item" data-category="racing">Racing</div><div class="category-item" data-category="sports">Sports</div><div class="category-item" data-category="rpg">RPG</div></div><div class="filter-container" id="filterTags"></div><div class="games-grid" id="gamesGrid"></div><div class="custom-frame-overlay" id="gameOverlay"><div class="custom-frame-container"><div class="custom-frame-header"><div class="frame-title" id="frameTitle"></div><div class="frame-controls"><button class="control-btn" id="refreshFrame">↻</button><button class="control-btn" id="closeFrame">×</button></div></div><div id="frameSpinner" class="spinner"></div><iframe id="gameContainer" class="custom-frame-content"></iframe></div></div><script>const games=[{id:"007",title:"007 - Everything or Nothing",genre:"action",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/c1544963-d870-4d90-93bd-d3e7d1fba3a3.image.png?v=1737418735013",url:"https://bobzgames.github.io/GBA/launcher.html#007",popularity:85,rating:4.5,releaseDate:"2024-01-15",},{id:"1.8.8-wasm",title:"Minecraft 1.8.8 (PC)",genre:"adventure",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/97c9944e-6613-46dc-b3d0-c11f4fec147f.image.png?v=1737445843304",url:"https://eaglercraft.com/mc/1.8.8-wasm/",popularity:85,rating:5.0,releaseDate:"2024-01-15",},{id:"Sbio",title:"SnowBattle.io",genre:"action",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/ac4b771b-ab1f-49a5-9207-58711055dfd9.image.png?v=1737487092628",url:"https://max.wr.do/go?id=8091",popularity:85,rating:5.0,releaseDate:"2024-01-15",},{id:"B&F",title:"Burger & Frights",genre:"horror",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/c4d846f3-036f-45b8-b3ad-ee54284bb920.image.png?v=1737499875691",url:"https://o.gamerdam.com/bs/bad-parenting/",popularity:85,rating:3.9,releaseDate:"2024-01-15",},{id:"closingd",title:"Closing Doors",genre:"horror",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/c3297347-42c1-4f8c-9530-5987fd3857e9.image.png?v=1737500649798",url:"https://o.gamerdam.com/ho/neighbour-next-door/",popularity:85,rating:3.9,releaseDate:"2024-01-15",},{id:"dsm",title:"Dude Simulator: Mayor",genre:"simulation",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/ac22eb37-b211-44a8-8070-551bc3bc8cbf.image.png?v=1737498762842",url:"https://www.gamenora.com/splash/dude-simulator-mayor/",popularity:85,rating:4.3,releaseDate:"2024-01-15",},{id:"dkc2",title:"Donkey Kong Country 2",genre:"adventure",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/b988d4c8-edff-4aac-89bb-ab850e51f781.image.png?v=1737419710013",url:"https://bobzgames.github.io/GBA/launcher.html#dkc2",popularity:92,rating:4.8,releaseDate:"2024-01-10",},{id:"fifa6",title:"FIFA 2006",genre:"sports",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/70a6fc48-d198-4b85-a8be-9f9cd3a8e407.image.png?v=1737419777578",url:"https://bobzgames.github.io/GBA/launcher.html#fifa6",popularity:78,rating:4.2,releaseDate:"2024-01-05",},{id:"fnaf1",title:"FNAF",genre:"action",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/aa7b063f-9031-4256-b418-43cdc7f68ecd.image.png?v=1737447781119",url:"https://max.wr.do/go?id=281",popularity:78,rating:4.2,releaseDate:"2024-01-05",},{id:"mx3m",title:"Moto X3M",genre:"racing",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/edacefe2-f950-4428-84df-7cc69efed3de.image.png?v=1737447961183",url:"https://max.wr.do/go?id=293",popularity:78,rating:3.8,releaseDate:"2024-01-05",},{id:"discus",title:"Among Us (offbrand)",genre:"action",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/6e0a3f55-33a1-4a1d-be2d-bf4327a2ccaf.image.png?v=1737448133518",url:"https://max.wr.do/go?id=1",popularity:78,rating:4.2,releaseDate:"2024-01-05",},{id:"gta",title:"Grand Theft Auto Advance",genre:"action",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/b5de948a-702e-494d-a687-4b4feffbe24f.image.png?v=1737419548701",url:"https://bobzgames.github.io/GBA/launcher.html#gta",popularity:95,rating:4.7,releaseDate:"2024-01-20",},{id:"mariokart",title:"Mario Kart: Super Circuit",genre:"racing",thumbnail:"https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/2f5c4be6-2edc-41bd-88d6-733c3f9107fe.image.png?v=1737419894956",url:"https://bobzgames.github.io/GBA/launcher.html#mariokart",popularity:90,rating:4.6,releaseDate:"2024-01-08",},];class AdvancedGamePortal{constructor(){this.filters={search:"",genre:"",sort:"popularity"};this.activeGame=null;this.init();}init(){this.setupEventListeners();this.renderGames();this.setupCustomFrame();}setupEventListeners(){document.getElementById("searchInput").addEventListener("input",(e)=>this.updateFilters({search:e.target.value}));document.getElementById("genreFilter").addEventListener("change",(e)=>this.updateFilters({genre:e.target.value}));document.getElementById("sortFilter").addEventListener("change",(e)=>this.updateFilters({sort:e.target.value}));document.getElementById("closeFrame").addEventListener("click",()=>this.closeGame());document.getElementById("refreshFrame").addEventListener("click",()=>this.refreshGame());}updateFilters(newFilters){this.filters={...this.filters,...newFilters};this.renderGames();}setupCustomFrame(){this.overlay=document.getElementById("gameOverlay");this.frameContainer=document.getElementById("gameContainer");this.spinner=document.getElementById("frameSpinner");this.frameTitle=document.getElementById("frameTitle");}createGameCard(game){const card=document.createElement("div");card.className="game-card";card.innerHTML=`<img class="game-img"src="${game.thumbnail}"alt="${game.title}"><div class="game-info"><h3 class="game-title">${game.title}</h3><div class="game-genre"><span class="tag">${game.genre}</span></div></div>`;card.addEventListener("click",()=>this.launchGame(game));return card;}filterAndSortGames(){let filtered=games.filter((game)=>{const matchesSearch=game.title.toLowerCase().includes(this.filters.search.toLowerCase());const matchesGenre=!this.filters.genre||game.genre===this.filters.genre;return matchesSearch&&matchesGenre;});filtered.sort((a,b)=>{switch(this.filters.sort){case"rating":return b.rating-a.rating;case"newest":return new Date(b.releaseDate)-new Date(a.releaseDate);default:return b.popularity-a.popularity;}});return filtered;}renderGames(){const grid=document.getElementById("gamesGrid");grid.innerHTML="";const filteredGames=this.filterAndSortGames();filteredGames.forEach((game)=>grid.appendChild(this.createGameCard(game)));}async launchGame(game){this.activeGame=game;this.overlay.classList.add("custom-frame-overlay-active");this.overlay.style.display="block";setTimeout(()=>this.overlay.style.opacity="1",50);this.frameTitle.textContent=game.title;this.spinner.style.display="block";try{await this.loadGameInFrame(game);}catch(error){console.error("Failed to load game:",error);}finally{this.spinner.style.display="none";}}loadGameInFrame(game){return new Promise((resolve,reject)=>{this.frameContainer.src=game.url;this.frameContainer.onload=()=>resolve();this.frameContainer.onerror=()=>reject("Error loading game");});}closeGame(){this.overlay.classList.remove("custom-frame-overlay-active");this.overlay.style.opacity="0";setTimeout(()=>{this.overlay.style.display="none";this.frameContainer.src="";},300);}refreshGame(){if(this.activeGame){this.loadGameInFrame(this.activeGame);}}}new AdvancedGamePortal();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buzzem Game Hub</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .game-card {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .game-card:hover {
+      transform: scale(1.05);
+    }
+    .iframe-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .iframe-container iframe {
+      width: 100%;
+      height: 80%;
+      border: none;
+    }
+    .iframe-tools {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .iframe-tools button {
+      margin: 0 5px;
+    }
+    .debug-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <h1 class="text-center mb-4">🎮 Buzzem Game Hub</h1>
+    <div class="row" id="gameList"></div>
+  </div>
+
+  <div class="iframe-container" id="iframeContainer">
+    <div class="iframe-tools">
+      <button class="btn btn-danger" id="closeIframe"><i class="fa fa-times"></i> Close</button>
+      <button class="btn btn-primary" id="reloadIframe"><i class="fa fa-sync"></i> Reload</button>
+      <button class="btn btn-success" id="fullscreenIframe"><i class="fa fa-expand"></i> Fullscreen</button>
+      <button class="btn btn-warning" id="debugIframe"><i class="fa fa-bug"></i> Debug</button>
+    </div>
+    <iframe id="gameIframe"></iframe>
+  </div>
+
+  <div class="debug-overlay d-flex" id="debugOverlay">
+    <div>
+      <p>🔧 Debugging Mode: Optimizing Performance</p>
+      <div class="progress" style="width: 300px; margin: auto;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+             role="progressbar" 
+             style="width: 100%; background-color: orange;">
+          Debugging...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.0/dist/sweetalert2.min.js"></script>
+  <script>
+    const games = [
+      {
+          id: "007",
+          title: "007 - Everything or Nothing",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/c1544963-d870-4d90-93bd-d3e7d1fba3a3.image.png?v=1737418735013",
+          url: "https://bobzgames.github.io/GBA/launcher.html#007",
+          popularity: 85,
+          rating: 4.5,
+          releaseDate: "2024-01-15",
+        },
+      {
+          id: "1.8.8-wasm",
+          title: "Minecraft 1.8.8 (PC)",
+          genre: "adventure",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/97c9944e-6613-46dc-b3d0-c11f4fec147f.image.png?v=1737445843304",
+          url: "https://eaglercraft.com/mc/1.8.8-wasm/",
+          popularity: 85,
+          rating: 5.0,
+          releaseDate: "2024-01-15",
+        },
+        {
+          id: "Sbio",
+          title: "SnowBattle.io",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/ac4b771b-ab1f-49a5-9207-58711055dfd9.image.png?v=1737487092628",
+          url: "https://max.wr.do/go?id=8091",
+          popularity: 85,
+          rating: 5.0,
+          releaseDate: "2024-01-15",
+        },
+        {
+          id: "B&F",
+          title: "Burger & Frights",
+          genre: "horror",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/c4d846f3-036f-45b8-b3ad-ee54284bb920.image.png?v=1737499875691",
+          url: "https://o.gamerdam.com/bs/bad-parenting/",
+          popularity: 85,
+          rating: 3.9,
+          releaseDate: "2024-01-15",
+        },
+                {
+          id: "closingd",
+          title: "Closing Doors",
+          genre: "horror",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/c3297347-42c1-4f8c-9530-5987fd3857e9.image.png?v=1737500649798",
+          url: "https://o.gamerdam.com/ho/neighbour-next-door/",
+          popularity: 85,
+          rating: 3.9,
+          releaseDate: "2024-01-15",
+        },
+        {
+          id: "dsm",
+          title: "Dude Simulator: Mayor",
+          genre: "simulation",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/ac22eb37-b211-44a8-8070-551bc3bc8cbf.image.png?v=1737498762842",
+          url: "https://www.gamenora.com/splash/dude-simulator-mayor/",
+          popularity: 85,
+          rating: 4.3,
+          releaseDate: "2024-01-15",
+        },
+        {
+          id: "dkc2",
+          title: "Donkey Kong Country 2",
+          genre: "adventure",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/b988d4c8-edff-4aac-89bb-ab850e51f781.image.png?v=1737419710013",
+          url: "https://bobzgames.github.io/GBA/launcher.html#dkc2",
+          popularity: 92,
+          rating: 4.8,
+          releaseDate: "2024-01-10",
+        },
+        {
+          id: "fifa6",
+          title: "FIFA 2006",
+          genre: "sports",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/70a6fc48-d198-4b85-a8be-9f9cd3a8e407.image.png?v=1737419777578",
+          url: "https://bobzgames.github.io/GBA/launcher.html#fifa6",
+          popularity: 78,
+          rating: 4.2,
+          releaseDate: "2024-01-05",
+        },
+        {
+          id: "fnaf1",
+          title: "FNAF",
+          genre: "horror",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/aa7b063f-9031-4256-b418-43cdc7f68ecd.image.png?v=1737447781119",
+          url: "https://max.wr.do/go?id=281",
+          popularity: 78,
+          rating: 4.2,
+          releaseDate: "2024-01-05",
+        },
+        {
+          id: "mx3m",
+          title: "Moto X3M",
+          genre: "racing",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/edacefe2-f950-4428-84df-7cc69efed3de.image.png?v=1737447961183",
+          url: "https://max.wr.do/go?id=293",
+          popularity: 78,
+          rating: 3.8,
+          releaseDate: "2024-01-05",
+        },
+{
+          id: "discus",
+          title: "Among Us (offbrand)",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/6e0a3f55-33a1-4a1d-be2d-bf4327a2ccaf.image.png?v=1737448133518",
+          url: "https://max.wr.do/go?id=1",
+          popularity: 78,
+          rating: 4.2,
+          releaseDate: "2024-01-05",
+        },
+        {
+          id: "gta",
+          title: "Grand Theft Auto Advance",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/b5de948a-702e-494d-a687-4b4feffbe24f.image.png?v=1737419548701",
+          url: "https://bobzgames.github.io/GBA/launcher.html#gta",
+          popularity: 95,
+          rating: 4.7,
+          releaseDate: "2024-01-20",
+        },
+        {
+          id: "mariokart",
+          title: "Mario Kart: Super Circuit",
+          genre: "racing",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/2f5c4be6-2edc-41bd-88d6-733c3f9107fe.image.png?v=1737419894956",
+          url: "https://bobzgames.github.io/GBA/launcher.html#mariokart",
+          popularity: 90,
+          rating: 4.6,
+          releaseDate: "2024-01-08",
+        },
+        {
+          id: "metalslug",
+          title: "Metal Slug Advance",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/5be01bb3-debf-4140-ab2e-2a974fc8ed3a.image.png?v=1737418806696",
+          url: "https://bobzgames.github.io/GBA/launcher.html#metalslug",
+          popularity: 88,
+          rating: 4.4,
+          releaseDate: "2024-01-12",
+        },
+        {
+          id: "pacman_world",
+          title: "Pac-Man World",
+          genre: "adventure",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/98406df6-e900-433d-8197-9cbc22738b18.image.png?v=1737419963378",
+          url: "https://bobzgames.github.io/GBA/launcher.html#pacman_world",
+          popularity: 82,
+          rating: 4.3,
+          releaseDate: "2024-01-18",
+        },
+        {
+          id: "pokemonemerald",
+          title: "Pokemon Emerald",
+          genre: "rpg",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/5caea579-141a-4003-8587-8dc29b4dea40.image.png?v=1737419296503",
+          url: "https://bobzgames.github.io/GBA/launcher.html#pokemonemerald",
+          popularity: 97,
+          rating: 4.9,
+          releaseDate: "2024-01-03",
+        },
+        {
+          id: "shell-shockers",
+          title: "Shell Shockers",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/8b91b035-843d-4034-b129-9a6f604bf285.image.png?v=1737418648314",
+          url: "https://freegames.io/splash/shell-shockers",
+          popularity: 86,
+          rating: 4.4,
+          releaseDate: "2024-01-07",
+        },
+        {
+          id: "kour-io",
+          title: "Kour.io",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/669571ad-100b-4556-9e67-35d9a9f6ac91.image.png?v=1737420081066",
+          url: "https://freegames.io/splash/kour-io",
+          popularity: 83,
+          rating: 4.2,
+          releaseDate: "2024-01-14",
+        },
+        {
+          id: "deadshot-io",
+          title: "Deadshot.io",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/f19c8d22-905a-423d-aa9a-72ff5e354818.image.png?v=1737420140457",
+          url: "https://freegames.io/splash/deadshot-io",
+          popularity: 89,
+          rating: 4.5,
+          releaseDate: "2024-01-09",
+        },
+        {
+          id: "football-bros",
+          title: "Football Bros",
+          genre: "sports",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/e8da6277-8b4f-4ff0-8b4c-4f4d7765729e.image.png?v=1737420193551",
+          url: "https://freegames.io/splash/football-bros",
+          popularity: 84,
+          rating: 4.3,
+          releaseDate: "2024-01-16",
+        },
+        {
+          id: "miniblox",
+          title: "Miniblox",
+          genre: "adventure",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/99b64f2e-d822-4c0c-838c-2af549bbc7f9.image.png?v=1737418469357",
+          url: "https://freegames.io/splash/miniblox",
+          popularity: 87,
+          rating: 4.4,
+          releaseDate: "2024-01-11",
+        },
+        {
+          id: "Slopegame",
+          title: "Slope",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/9da12dc8-f3e5-4925-969b-debaaa887979.image.png?v=1737446558331",
+          url: "https://theslope.github.io/games/slope/index.html",
+          popularity: 87,
+          rating: 4.3,
+          releaseDate: "2024-01-11",
+        },
+        {
+          id: "1v1lol",
+          title: "1v1.lol",
+          genre: "action",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/2f730e50-d47e-4c2e-8494-fb9cd6166e39.image.png?v=1737447116543",
+          url: "https://unblockedgamesboo.com/webgl/1v1-lol/index.html",
+          popularity: 87,
+          rating: 4.3,
+          releaseDate: "2024-01-11",
+        },
+        {
+          id: "ptrack",
+          title: "polytrack",
+          genre: "racing",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/97743957-0085-4d01-ba6c-ff83ae284ebd.image.png?v=1737447292441",
+          url: "https://max.wr.do/go?id=8347",
+          popularity: 87,
+          rating: 3.9,
+          releaseDate: "2024-01-11",
+        },
+        {
+          id: "basket-bros",
+          title: "Basket Bros",
+          genre: "sports",
+          thumbnail: "https://cdn.glitch.global/a7b27f3d-df32-4db7-abff-249d6bdaa315/cb31c8aa-a98f-44f1-a897-a1a235bddb07.image.png?v=1737418292795",
+          url: "https://freegames.io/splash/basket-bros",
+          popularity: 85,
+          rating: 4.3,
+          releaseDate: "2024-01-13",
+        },
+    ];
+
+    const gameList = document.getElementById("gameList");
+    games.forEach(game => {
+      const col = document.createElement("div");
+      col.className = "col-lg-4 col-md-6 mb-4";
+      col.innerHTML = `
+        <div class="card game-card" data-url="${game.url}">
+          <img src="${game.thumbnail}" class="card-img-top" alt="${game.title}">
+          <div class="card-body">
+            <h5 class="card-title">${game.title}</h5>
+            <p class="card-text">Genre: ${game.genre}</p>
+            <p class="card-text">Rating: ⭐ ${game.rating}</p>
+          </div>
+        </div>
+      `;
+      gameList.appendChild(col);
+    });
+
+    const iframeContainer = document.getElementById("iframeContainer");
+    const gameIframe = document.getElementById("gameIframe");
+    const closeIframe = document.getElementById("closeIframe");
+    const reloadIframe = document.getElementById("reloadIframe");
+    const fullscreenIframe = document.getElementById("fullscreenIframe");
+    const debugIframe = document.getElementById("debugIframe");
+    const debugOverlay = document.getElementById("debugOverlay");
+
+    document.querySelectorAll(".game-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const url = card.getAttribute("data-url");
+        gameIframe.src = url;
+        iframeContainer.style.display = "flex";
+      });
+    });
+
+    closeIframe.addEventListener("click", () => {
+      iframeContainer.style.display = "none";
+      gameIframe.src = "";
+    });
+
+    reloadIframe.addEventListener("click", () => {
+      gameIframe.contentWindow.location.reload();
+    });
+
+    fullscreenIframe.addEventListener("click", () => {
+      if (gameIframe.requestFullscreen) {
+        gameIframe.requestFullscreen();
+      } else if (gameIframe.webkitRequestFullscreen) {
+        gameIframe.webkitRequestFullscreen();
+      } else if (gameIframe.msRequestFullscreen) {
+        gameIframe.msRequestFullscreen();
+      }
+    });
+
+    debugIframe.addEventListener("click", () => {
+      debugOverlay.style.display = "flex";
+      setTimeout(() => {
+        debugOverlay.style.display = "none";
+        const currentUrl = gameIframe.src;
+        if (!currentUrl.includes("?debug=true")) {
+          gameIframe.src = currentUrl + "?debug=true";
+        }
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
