@@ -3,35 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buzzem Game Hub</title>
+  <meta property="og:title" content="Buzzem">
+  <meta property="og:description" content="Play awesome games in one place with Buzzem!">
+  <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/4/41/Simple_game_icon.svg">
+  <meta property="og:url" content="https://lipicode.github.io/Realmzz/buzzem.html">
+  <meta property="og:bio" content="Buzzem is a unblocked games service.">
+  <title>Buzzem</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     body {
-      background-color: #121212;
+      font-family: 'Poppins', sans-serif;
+      background-color: #1e1e2f;
       color: #ffffff;
-      cursor: url('https://cdn-icons-png.flaticon.com/512/1055/1055183.png'), auto;
     }
     h1 {
-      font-size: 2.5rem;
-      font-weight: bold;
+      font-size: 2.8rem;
+      font-weight: 600;
       color: #ffcc00;
+      text-shadow: 2px 2px 4px #000;
     }
     .game-card {
-      cursor: url('https://cdn-icons-png.flaticon.com/512/1055/1055183.png'), auto;
-      transition: transform 0.3s, box-shadow 0.3s;
-      background-color: #1e1e1e;
+      background-color: #29294d;
       border: none;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
     .game-card img {
       width: 100%;
-      height: 200px;
+      height: 180px;
       object-fit: cover;
-      border-radius: 8px;
     }
     .game-card:hover {
       transform: scale(1.05);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.8);
+    }
+    .game-card .card-body {
+      text-align: center;
+      color: #ddd;
     }
     .iframe-container {
       display: none;
@@ -53,79 +65,46 @@
       border: none;
       border-radius: 10px;
     }
-    .iframe-tools {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      margin-bottom: 10px;
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: #aaa;
+      font-size: 0.9rem;
     }
-    .iframe-tools button {
-      margin: 0 5px;
+    footer a {
+      color: #ffcc00;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .btn-custom {
       background-color: #ffcc00;
       color: #000;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-weight: bold;
       padding: 10px 15px;
       transition: background-color 0.3s, transform 0.2s;
     }
-    .iframe-tools button:hover {
+    .btn-custom:hover {
       background-color: #ffc107;
       transform: scale(1.1);
-    }
-    .debug-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .progress {
-      width: 300px;
-      margin: auto;
-    }
-    .custom-cursor {
-      position: absolute;
-      pointer-events: none;
-      z-index: 9999;
     }
   </style>
 </head>
 <body>
   <div class="container py-5">
-    <h1 class="text-center mb-4">🎮 Buzzem Game Hub</h1>
-    <div class="row g-3" id="gameList"></div>
+    <h1 class="text-center mb-4"> Buzzem </h1>
+    <div class="text-center mb-4">
+      <button class="btn btn-custom" id="aboutBlankOpener">Open About:Blank</button>
+    </div>
+    <div class="row g-4" id="gameList"></div>
   </div>
 
-  <div class="iframe-container" id="iframeContainer">
-    <div class="iframe-tools">
-      <button id="closeIframe"><i class="fa fa-times"></i> Close</button>
-      <button id="reloadIframe"><i class="fa fa-sync"></i> Reload</button>
-      <button id="fullscreenIframe"><i class="fa fa-expand"></i> Fullscreen</button>
-      <button id="debugIframe"><i class="fa fa-bug"></i> Debug</button>
-    </div>
-    <iframe id="gameIframe"></iframe>
-  </div>
-
-  <div class="debug-overlay d-flex" id="debugOverlay">
-    <div>
-      <p>🔧 Debugging Mode: Optimizing Performance</p>
-      <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" 
-             role="progressbar" 
-             style="width: 100%; background-color: orange;">
-          Debugging...
-        </div>
-      </div>
-    </div>
-  </div>
+  <footer>
+    <p>Buzzem Game Hub © 2025 | <a href="https://lipicode.github.io/Realmzz/buzzem.html" target="_blank">BLANKER</a></p>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -384,14 +363,17 @@
     ];
 
     const gameList = document.getElementById("gameList");
+    const aboutBlankOpener = document.getElementById("aboutBlankOpener");
+
     games.forEach(game => {
       const col = document.createElement("div");
       col.className = "col-lg-4 col-md-6";
       col.innerHTML = `
-        <div class="card game-card" data-url="${game.url}">
+        <div class="card game-card">
           <img src="${game.thumbnail}" alt="${game.title}">
-          <div class="card-body text-center">
+          <div class="card-body">
             <h5>${game.title}</h5>
+            <p>Genre: ${game.genre}</p>
             <p>⭐ ${game.rating}</p>
           </div>
         </div>
@@ -399,50 +381,12 @@
       gameList.appendChild(col);
     });
 
-    const iframeContainer = document.getElementById("iframeContainer");
-    const gameIframe = document.getElementById("gameIframe");
-    const closeIframe = document.getElementById("closeIframe");
-    const reloadIframe = document.getElementById("reloadIframe");
-    const fullscreenIframe = document.getElementById("fullscreenIframe");
-    const debugIframe = document.getElementById("debugIframe");
-    const debugOverlay = document.getElementById("debugOverlay");
-
-    document.querySelectorAll(".game-card").forEach(card => {
-      card.addEventListener("click", () => {
-        const url = card.getAttribute("data-url");
-        gameIframe.src = url;
-        iframeContainer.style.display = "flex";
-      });
-    });
-
-    closeIframe.addEventListener("click", () => {
-      iframeContainer.style.display = "none";
-      gameIframe.src = "";
-    });
-
-    reloadIframe.addEventListener("click", () => {
-      gameIframe.contentWindow.location.reload();
-    });
-
-    fullscreenIframe.addEventListener("click", () => {
-      if (gameIframe.requestFullscreen) {
-        gameIframe.requestFullscreen();
-      } else if (gameIframe.webkitRequestFullscreen) {
-        gameIframe.webkitRequestFullscreen();
-      } else if (gameIframe.msRequestFullscreen) {
-        gameIframe.msRequestFullscreen();
-      }
-    });
-
-    debugIframe.addEventListener("click", () => {
-      debugOverlay.style.display = "flex";
-      setTimeout(() => {
-        debugOverlay.style.display = "none";
-        const currentUrl = gameIframe.src;
-        if (!currentUrl.includes("?debug=true")) {
-          gameIframe.src = currentUrl + "?debug=true";
-        }
-      }, 2);
+    aboutBlankOpener.addEventListener("click", () => {
+      const newTab = window.open("about:blank", "_blank");
+      newTab.document.write(`
+        <iframe src="https://lipicode.github.io/Realmzz/buzzem.html" 
+                style="width:100%;height:100%;border:none;"></iframe>
+      `);
     });
   </script>
 </body>
