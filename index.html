@@ -1,273 +1,216 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <title>Realmzz</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Segoe UI", sans-serif;
-      }
-      :root {
-        --primary: #0a0a1a;
-        --secondary: #12121f;
-        --accent: #1f1f3a;
-        --text: #ff3366;
-        --gradient: linear-gradient(135deg, var(--accent), var(--secondary));
-        --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      }
-      body {
-        background: var(--primary);
-        color: #fff;
-        min-height: 100vh;
-      }
-      .header {
-        background: var(--gradient);
-        padding: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: var(--shadow);
-      }
-      .logo {
-        color: var(--text);
-        font-size: 2rem;
-        font-weight: bold;
-        text-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
-      }
-      .search-container {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .search-input,
-      .filter-select {
-        padding: 0.5rem;
-        border-radius: 4px;
-        border: 1px solid var(--accent);
-        background: rgba(15, 15, 30, 0.8);
-        color: #fff;
-        width: 200px;
-        backdrop-filter: blur(5px);
-      }
-      .filter-container {
-        display: flex;
-        gap: 0.5rem;
-        padding: 1rem;
-        background: var(--gradient);
-        flex-wrap: wrap;
-      }
-      .filter-btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        background: rgba(15, 15, 30, 0.8);
-        color: #fff;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      .filter-btn:hover {
-        background: var(--text);
-        transform: translateY(-2px);
-      }
-      .filter-btn.active {
-        background: var(--text);
-        box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
-      }
-      .games-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1.5rem;
-        padding: 1.5rem;
-      }
-      .game-card {
-        background: var(--secondary);
-        border-radius: 12px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: var(--shadow);
-      }
-      .game-card:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
-      }
-      .game-img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        transition: all 0.3s ease;
-      }
-      .game-info {
-        padding: 1rem;
-      }
-      .game-title {
-        color: var(--text);
-        margin-bottom: 0.5rem;
-        font-size: 1.2rem;
-      }
-      .game-genre {
-        font-size: 0.9rem;
-        color: #888;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .game-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 0.5rem;
-        font-size: 0.8rem;
-        color: #666;
-      }
-      .custom-frame-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.95);
-        z-index: 1000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-      .custom-frame-container {
-        position: relative;
-        width: 95%;
-        height: 95%;
-        margin: 2% auto;
-        background: var(--secondary);
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-      }
-      .custom-frame-header {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        padding: 1rem;
-        background: var(--gradient);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        z-index: 1010;
-      }
-      .frame-title {
-        font-size: 1.2rem;
-        color: var(--text);
-      }
-      .frame-controls {
-        display: flex;
-        gap: 1rem;
-      }
-      .control-btn {
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      .control-btn:hover {
-        color: var(--text);
-        transform: scale(1.1);
-      }
-      .custom-frame-content {
-        width: 100%;
-        height: 100%;
-        border: none;
-        background: #000;
-      }
-      .custom-frame-active {
-        display: block;
-        opacity: 1;
-      }
-      .spinner {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 60px;
-        height: 60px;
-        border: 7px solid var(--accent);
-        border-top-color: var(--text);
-        border-radius: 70%;
-        animation: spin 1s linear infinite;
-      }
-      @keyframes spin {
-        to {
-          transform: translate(-50%, -50%) rotate(360deg);
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #e0e0ff;
+            --text-accent: #00ffff;
+            --border-radius: 12px;
+            --glass-blur: blur(15px);
         }
-      }
-      .tag {
-        background: var(--accent);
-        padding: 0.2rem 0.5rem;
-        border-radius: 3px;
-        font-size: 0.8rem;
-      }
-      .popularity-meter {
-        height: 4px;
-        background: #333;
-        border-radius: 2px;
-        overflow: hidden;
-      }
-      .popularity-fill {
-        height: 100%;
-        background: var(--text);
-        transition: width 0.3s ease;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, var(--bg-primary), #0a0a1f);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+        }
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--text-accent), #8b00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .search-input, .filter-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 10px 15px;
+            color: var(--text-primary);
+            border-radius: var(--border-radius);
+            backdrop-filter: var(--glass-blur);
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+        }
+        .search-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--text-accent);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 25px 0;
+        }
+        .game-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transform-origin: center;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--text-accent), #8b00ff);
+        }
+        .game-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+        .game-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .game-card:hover .game-img {
+            transform: scale(1.1);
+        }
+        .game-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .game-title {
+            color: var(--text-accent);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .game-genre-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .genre-tag {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            text-align: center;
+            min-width: 100px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.2), rgba(0,0,0,0));
+        }
+        .genre-action { background-color: #ff3366; color: white; }
+        .genre-adventure { background-color: #1e90ff; color: white; }
+        .genre-racing { background-color: #32cd32; color: white; }
+        .genre-horror { background-color: #800080; color: white; }
+        .genre-rpg { background-color: #ff8c00; color: white; }
+        .genre-simulation { background-color: #4169e1; color: white; }
+        .game-meta {
+            margin-top: auto;
+            color: #999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .popularity-meter {
+            width: 100px;
+            height: 5px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .popularity-fill {
+            height: 100%;
+            background: var(--text-accent);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .search-container {
+                width: 100%;
+                flex-direction: column;
+            }
+            .search-input, .filter-select {
+                width: 100%;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <header class="header">
-      <div class="logo">Realmzz</div>
-      <div class="search-container">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search games..."
-          id="searchInput"
-        /><select class="filter-select" id="genreFilter">
-          <option value="">All Genres</option>
-          <option value="action">Action</option>
-          <option value="adventure">Adventure</option>
-          <option value="racing">Racing</option>
-          <option value="sports">Sports</option>
-          <option value="rpg">RPG</option></select
-        ><select class="filter-select" id="sortFilter">
-          <option value="popularity">Most Popular</option>
-          <option value="rating">Highest Rated</option>
-          <option value="newest">Newest</option>
-        </select>
-      </div>
-    </header>
-    <div class="filter-container" id="filterTags"></div>
-    <div class="games-grid" id="gamesGrid"></div>
-    <div class="custom-frame-overlay" id="gameOverlay">
-      <div class="custom-frame-container">
-        <div class="custom-frame-header">
-          <div class="frame-title" id="frameTitle"></div>
-          <div class="frame-controls">
-            <button class="control-btn" id="refreshFrame">↻</button
-            ><button class="control-btn" id="closeFrame">×</button>
-          </div>
-        </div>
-        <div id="frameSpinner" class="spinner"></div>
-        <iframe id="gameContainer" class="custom-frame-content"></iframe>
-      </div>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">Realmzz</div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search games..." id="searchInput" />
+                <select class="filter-select" id="genreFilter">
+                    <option value="">All Genres</option>
+                    <option value="action">Action</option>
+                    <option value="adventure">Adventure</option>
+                    <option value="racing">Racing</option>
+                    <option value="horror">Horror</option>
+                    <option value="rpg">RPG</option>
+                    <option value="simulation">Simulation</option>
+                </select>
+                <select class="filter-select" id="sortFilter">
+                    <option value="popularity">Most Popular</option>
+                    <option value="rating">Highest Rated</option>
+                    <option value="newest">Newest</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="games-grid" id="gamesGrid"></div>
     </div>
+
     <script>
-      const games = [
-        {
+        const games = [
+                  {
           id: "007",
           title: "007 - Everything or Nothing",
           genre: "action",
@@ -518,124 +461,78 @@
           rating: 4.3,
           releaseDate: "2024-01-13",
         },
-      ];
-      class AdvancedGamePortal {
-        constructor() {
-          this.filters = { search: "", genre: "", sort: "popularity" };
-          this.activeGame = null;
-          this.init();
-        }
-        init() {
-          this.setupEventListeners();
-          this.renderGames();
-          this.setupCustomFrame();
-        }
-        setupEventListeners() {
-          document
-            .getElementById("searchInput")
-            .addEventListener("input", (e) =>
-              this.updateFilters({ search: e.target.value })
-            );
-          document
-            .getElementById("genreFilter")
-            .addEventListener("change", (e) =>
-              this.updateFilters({ genre: e.target.value })
-            );
-          document
-            .getElementById("sortFilter")
-            .addEventListener("change", (e) =>
-              this.updateFilters({ sort: e.target.value })
-            );
-          document
-            .getElementById("closeFrame")
-            .addEventListener("click", () => this.closeGame());
-          document
-            .getElementById("refreshFrame")
-            .addEventListener("click", () => this.refreshGame());
-        }
-        updateFilters(newFilters) {
-          this.filters = { ...this.filters, ...newFilters };
-          this.renderGames();
-        }
-        setupCustomFrame() {
-          this.overlay = document.getElementById("gameOverlay");
-          this.frameContainer = document.getElementById("gameContainer");
-          this.spinner = document.getElementById("frameSpinner");
-          this.frameTitle = document.getElementById("frameTitle");
-        }
-        createGameCard(game) {
-          const card = document.createElement("div");
-          card.className = "game-card";
-          card.innerHTML = `<img class="game-img"src="${game.thumbnail}"alt="${game.title}"><div class="game-info"><h3 class="game-title">${game.title}</h3><div class="game-genre"><span class="tag">${game.genre}</span></div><div class="game-meta"><span>Rating: ${game.rating}★</span><div class="popularity-meter"><div class="popularity-fill"style="width:${game.popularity}%"></div></div></div></div>`;
-          card.addEventListener("click", () => this.launchGame(game));
-          return card;
-        }
-        filterAndSortGames() {
-          let filtered = games.filter((game) => {
-            const matchesSearch = game.title
-              .toLowerCase()
-              .includes(this.filters.search.toLowerCase());
-            const matchesGenre =
-              !this.filters.genre || game.genre === this.filters.genre;
-            return matchesSearch && matchesGenre;
-          });
-          filtered.sort((a, b) => {
-            switch (this.filters.sort) {
-              case "rating":
-                return b.rating - a.rating;
-              case "newest":
-                return new Date(b.releaseDate) - new Date(a.releaseDate);
-              default:
-                return b.popularity - a.popularity;
+        ];
+
+        class AdvancedGamePortal {
+            constructor() {
+                this.filters = { search: "", genre: "", sort: "popularity" };
+                this.setupEventListeners();
+                this.renderGames();
             }
-          });
-          return filtered;
+
+            setupEventListeners() {
+                document.getElementById("searchInput")
+                    .addEventListener("input", (e) => this.updateFilters({ search: e.target.value }));
+                
+                document.getElementById("genreFilter")
+                    .addEventListener("change", (e) => this.updateFilters({ genre: e.target.value }));
+                
+                document.getElementById("sortFilter")
+                    .addEventListener("change", (e) => this.updateFilters({ sort: e.target.value }));
+            }
+
+            updateFilters(newFilters) {
+                this.filters = { ...this.filters, ...newFilters };
+                this.renderGames();
+            }
+
+            renderGames() {
+                const grid = document.getElementById("gamesGrid");
+                grid.innerHTML = "";
+                this.filterAndSortGames().forEach(game => {
+                    const card = this.createGameCard(game);
+                    grid.appendChild(card);
+                });
+            }
+
+            createGameCard(game) {
+                const card = document.createElement("div");
+                card.className = "game-card";
+                card.innerHTML = `
+                    <img class="game-img" src="${game.thumbnail}" alt="${game.title}">
+                    <div class="game-info">
+                        <h3 class="game-title">${game.title}</h3>
+                        <div class="game-genre-container">
+                            <span class="genre-tag genre-${game.genre}">${game.genre}</span>
+                            <div class="game-meta">
+                                Rating: ${game.rating}★
+                                <div class="popularity-meter">
+                                    <div class="popularity-fill" style="width:${game.popularity}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return card;
+            }
+
+            filterAndSortGames() {
+                return games
+                    .filter(game => 
+                        game.title.toLowerCase().includes(this.filters.search.toLowerCase()) &&
+                        (!this.filters.genre || game.genre === this.filters.genre)
+                    )
+                    .sort((a, b) => {
+                        switch(this.filters.sort) {
+                            case 'rating': return b.rating - a.rating;
+                            case 'newest': return new Date(b.releaseDate) - new Date(a.releaseDate);
+                            default: return b.popularity - a.popularity;
+                        }
+                    });
+            }
         }
-        renderGames() {
-          const grid = document.getElementById("gamesGrid");
-          grid.innerHTML = "";
-          const filteredGames = this.filterAndSortGames();
-          filteredGames.forEach((game) =>
-            grid.appendChild(this.createGameCard(game))
-          );
-        }
-        async launchGame(game) {
-          this.activeGame = game;
-          this.overlay.classList.add("custom-frame-overlay-active");
-          this.overlay.style.display = "block";
-          setTimeout(() => (this.overlay.style.opacity = "1"), 50);
-          this.frameTitle.textContent = game.title;
-          this.spinner.style.display = "block";
-          try {
-            await this.loadGameInFrame(game);
-          } catch (error) {
-            console.error("Failed to load game:", error);
-          } finally {
-            this.spinner.style.display = "none";
-          }
-        }
-        loadGameInFrame(game) {
-          return new Promise((resolve, reject) => {
-            this.frameContainer.src = game.url;
-            this.frameContainer.onload = () => resolve();
-            this.frameContainer.onerror = () => reject("Error loading game");
-          });
-        }
-        closeGame() {
-          this.overlay.classList.remove("custom-frame-overlay-active");
-          this.overlay.style.opacity = "0";
-          setTimeout(() => {
-            this.overlay.style.display = "none";
-            this.frameContainer.src = "";
-          }, 300);
-        }
-        refreshGame() {
-          if (this.activeGame) {
-            this.loadGameInFrame(this.activeGame);
-          }
-        }
-      }
-      new AdvancedGamePortal();
+
+        new AdvancedGamePortal();
     </script>
-  </body>
+</body>
 </html>
